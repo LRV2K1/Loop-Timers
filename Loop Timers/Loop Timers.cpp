@@ -8,11 +8,14 @@
 
 #include "SleepFunctions.h"
 
-#define PERIOD 1
+#define PERIOD 20
 #define TOLERANCE 0.02
 
 int main()
 {
+    #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
+    timeBeginPeriod(PERIOD);
+
     double totalTime = 0;
     ThreadSleep ts;
     std::cout << "start TS" << std::endl;
@@ -69,9 +72,6 @@ int main()
     std::cout << "end PS" << std::endl;
     std::cout << "time PS:" << totalTime / 100 << std::endl << std::endl;
 
-
-    #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
-    timeBeginPeriod(PERIOD);
 
     totalTime = 0;
     RobustSleep rs(PERIOD, TOLERANCE);
