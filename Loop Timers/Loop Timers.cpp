@@ -13,8 +13,6 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
-
     double totalTime = 0;
     ThreadSleep ts;
     std::cout << "start TS" << std::endl;
@@ -31,7 +29,7 @@ int main()
         start = end;
     }
     std::cout << "end TS" << std::endl;
-    std::cout << "time TS:" << totalTime / 100 << std::endl;
+    std::cout << "time TS:" << totalTime / 100 << std::endl << std::endl;
 
 
     totalTime = 0;
@@ -50,7 +48,7 @@ int main()
         start = end;
     }
     std::cout << "end LS" << std::endl;
-    std::cout << "time LS:" << totalTime / 100 << std::endl;
+    std::cout << "time LS:" << totalTime / 100 << std::endl << std::endl;
 
 
     totalTime = 0;
@@ -69,7 +67,7 @@ int main()
         start = end;
     }
     std::cout << "end PS" << std::endl;
-    std::cout << "time PS:" << totalTime / 100 << std::endl;
+    std::cout << "time PS:" << totalTime / 100 << std::endl << std::endl;
 
 
     #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
@@ -91,5 +89,5 @@ int main()
         start = end;
     }
     std::cout << "end RS" << std::endl;
-    std::cout << "time RS:" << totalTime / 100 << std::endl;
+    std::cout << "time RS:" << totalTime / 100 << std::endl << std::endl;
 }
