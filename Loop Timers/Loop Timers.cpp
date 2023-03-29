@@ -15,68 +15,81 @@ int main()
 {
     std::cout << "Hello World!\n";
 
+    double totalTime = 0;
     ThreadSleep ts;
-
-    auto start = std::chrono::high_resolution_clock::now();
-
     std::cout << "start TS" << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 100; i++)
+    {
 
-    ts.Sleep(1000);
+        ts.Sleep(100);
 
-    auto end = std::chrono::high_resolution_clock::now();
-
+        auto end = std::chrono::high_resolution_clock::now();
+        auto deltaNs = (end - start).count();
+        double deltaMs = deltaNs / 1e6;
+        totalTime += deltaMs;
+        start = end;
+    }
     std::cout << "end TS" << std::endl;
-    auto deltaNs = (end - start).count();
-    double deltaMs = deltaNs / 1e6;
-    std::cout << "time TS:" << deltaMs << std::endl;
+    std::cout << "time TS:" << totalTime / 100 << std::endl;
 
 
+    totalTime = 0;
     LockSleep ls;
-
-    start = std::chrono::high_resolution_clock::now();
-
     std::cout << "start LS" << std::endl;
-
-    ls.Sleep(1000);
-
-    end = std::chrono::high_resolution_clock::now();
-
-    std::cout << "end LS" << std::endl;
-    deltaNs = (end - start).count();
-    deltaMs = deltaNs / 1e6;
-    std::cout << "time LS:" << deltaMs << std::endl;
-
-
-    PerfectSleep ps;
-
     start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 100; i++)
+    {
 
+        ls.Sleep(100);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto deltaNs = (end - start).count();
+        double deltaMs = deltaNs / 1e6;
+        totalTime += deltaMs;
+        start = end;
+    }
+    std::cout << "end LS" << std::endl;
+    std::cout << "time LS:" << totalTime / 100 << std::endl;
+
+
+    totalTime = 0;
+    PerfectSleep ps;
     std::cout << "start PS" << std::endl;
+    start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 100; i++)
+    {
 
-    ps.Sleep(1000);
+        ps.Sleep(100);
 
-    end = std::chrono::high_resolution_clock::now();
-
+        auto end = std::chrono::high_resolution_clock::now();
+        auto deltaNs = (end - start).count();
+        double deltaMs = deltaNs / 1e6;
+        totalTime += deltaMs;
+        start = end;
+    }
     std::cout << "end PS" << std::endl;
-    deltaNs = (end - start).count();
-    deltaMs = deltaNs / 1e6;
-    std::cout << "time PS:" << deltaMs << std::endl;
+    std::cout << "time PS:" << totalTime / 100 << std::endl;
+
 
     #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
     timeBeginPeriod(PERIOD);
 
+    totalTime = 0;
     RobustSleep rs(PERIOD, TOLERANCE);
-
-    start = std::chrono::high_resolution_clock::now();
-
     std::cout << "start RS" << std::endl;
+    start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 100; i++)
+    {
 
-    rs.Sleep(1000);
+        rs.Sleep(100);
 
-    end = std::chrono::high_resolution_clock::now();
-
+        auto end = std::chrono::high_resolution_clock::now();
+        auto deltaNs = (end - start).count();
+        double deltaMs = deltaNs / 1e6;
+        totalTime += deltaMs;
+        start = end;
+    }
     std::cout << "end RS" << std::endl;
-    deltaNs = (end - start).count();
-    deltaMs = deltaNs / 1e6;
-    std::cout << "time RS:" << deltaMs << std::endl;
+    std::cout << "time RS:" << totalTime / 100 << std::endl;
 }
