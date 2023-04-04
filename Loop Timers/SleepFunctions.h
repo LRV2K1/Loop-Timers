@@ -3,6 +3,7 @@
 class ISleepFunction
 {
 public:
+	virtual ~ISleepFunction() = default;
 	virtual void Sleep(const double& milliseconds) = 0;
 };
 

@@ -140,9 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Loop Timers.cpp" />
+    <ClCompile Include="LoopTimers.cpp" />
     <ClCompile Include="SleepFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LoopTimers.h" />
     <ClInclude Include="SleepFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
