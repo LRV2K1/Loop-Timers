@@ -27,3 +27,37 @@ private:
 	std::chrono::steady_clock::time_point loopStartTime;
 };
 
+class DoubleLoopTimer : public ILoopTimer
+{
+public:
+	DoubleLoopTimer(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
+	virtual void StartLoop() override;
+	virtual void HandleLoop() override;
+private:
+	std::chrono::steady_clock::time_point loopStartTime;
+	std::chrono::steady_clock::duration overTime{ 0 };
+};
+
+class AllLoopTimerC : public ILoopTimer
+{
+public:
+	AllLoopTimerC(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
+	virtual void StartLoop() override;
+	virtual void HandleLoop() override;
+private:
+	std::chrono::steady_clock::time_point loopStartTime;
+	std::chrono::steady_clock::duration overTime{ 0 };
+};
+
+class AllLoopTimerS : public ILoopTimer
+{
+public:
+	AllLoopTimerS(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
+	virtual void StartLoop() override;
+	virtual void HandleLoop() override;
+private:
+	std::chrono::steady_clock::time_point loopStartTime;
+	std::chrono::steady_clock::time_point timerStartTime;
+	long long loopItteration{0};
+};
+
