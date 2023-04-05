@@ -11,7 +11,7 @@ public:
 	ILoopTimer(double loopTime, ISleepFunction* sleepFunction) : loopTime(loopTime), sleepFunction(sleepFunction) {};
 	virtual ~ILoopTimer() { delete sleepFunction; };
 	virtual void StartLoop() = 0;
-	virtual void HandleLoop() = 0;
+	virtual std::chrono::steady_clock::duration HandleLoop() = 0;
 protected:
 	ISleepFunction* sleepFunction;
 	double loopTime;
@@ -22,7 +22,7 @@ class SingleLoopTimer : public ILoopTimer
 public:
 	SingleLoopTimer(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
 	virtual void StartLoop() override;
-	virtual void HandleLoop() override;
+	virtual std::chrono::steady_clock::duration HandleLoop() override;
 private:
 	std::chrono::steady_clock::time_point loopStartTime;
 };
@@ -32,7 +32,7 @@ class DoubleLoopTimer : public ILoopTimer
 public:
 	DoubleLoopTimer(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
 	virtual void StartLoop() override;
-	virtual void HandleLoop() override;
+	virtual std::chrono::steady_clock::duration HandleLoop() override;
 private:
 	std::chrono::steady_clock::time_point loopStartTime;
 	std::chrono::steady_clock::duration overTime{ 0 };
@@ -43,7 +43,7 @@ class AllLoopTimerC : public ILoopTimer
 public:
 	AllLoopTimerC(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
 	virtual void StartLoop() override;
-	virtual void HandleLoop() override;
+	virtual std::chrono::steady_clock::duration HandleLoop() override;
 private:
 	std::chrono::steady_clock::time_point loopStartTime;
 	std::chrono::steady_clock::duration overTime{ 0 };
@@ -54,7 +54,7 @@ class AllLoopTimerS : public ILoopTimer
 public:
 	AllLoopTimerS(double loopTime, ISleepFunction* sleepFunction) : ILoopTimer(loopTime, sleepFunction) {}
 	virtual void StartLoop() override;
-	virtual void HandleLoop() override;
+	virtual std::chrono::steady_clock::duration HandleLoop() override;
 private:
 	std::chrono::steady_clock::time_point loopStartTime;
 	std::chrono::steady_clock::time_point timerStartTime;

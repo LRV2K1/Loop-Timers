@@ -2,9 +2,12 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include <thread>
 #include <windows.h>
+#include <queue>
+#include <string>
 
 #include "SleepFunctions.h"
 #include "LoopTimers.h"
@@ -14,231 +17,62 @@
 #define ITTERATIONS 100
 #define LOOPTIME 20
 
+void WriteQueue(std::queue<std::chrono::steady_clock::duration> queue, std::string name)
+{
+    std::ofstream file;
+    file.open(name + ".csv");
+    file << "Loop Time (ns)" << std::endl;
+    while (!queue.empty())
+    {
+        file << (queue.front()).count() << std::endl;
+        queue.pop();
+    }
+    file.close();
+}
+
+void LoopTimerTest(ILoopTimer* loopTimer, std::string name, double loopTime, int itterations)
+{
+    std::queue<std::chrono::steady_clock::duration> queue;
+
+    std::cout << "start " << name << ": " << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < itterations; i++)
+    {
+        loopTimer->StartLoop();
+        queue.push(loopTimer->HandleLoop());
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    double totalTime = (end - start).count() / 1e6;
+    std::cout << "end " << name << ": " << std::endl;
+    std::cout << "time " << name << ": " << totalTime / ITTERATIONS << std::endl << std::endl;
+
+    WriteQueue(queue, name);
+
+    delete loopTimer;
+}
+
 int main()
 {
     #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
     timeBeginPeriod(PERIOD);
 
-    SingleLoopTimer SL_TS(LOOPTIME, new ThreadSleep);
-    std::cout << "start SL_TS" << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        SL_TS.StartLoop();
-        SL_TS.HandleLoop();
-    }
-    auto end = std::chrono::high_resolution_clock::now();
-    double totalTime = (end - start).count() / 1e6;
-    std::cout << "end SL_TS" << std::endl;
-    std::cout << "time SL_TS:" << totalTime / ITTERATIONS << std::endl << std::endl;
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new ThreadSleep), "SL_TS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new LockSleep), "SL_LS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new PerfectSleep), "SL_PS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "SL_RS", LOOPTIME, ITTERATIONS);
 
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new ThreadSleep), "DL_TS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new LockSleep), "DL_LS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new PerfectSleep), "DL_PS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "SL_RS", LOOPTIME, ITTERATIONS);
 
-    SingleLoopTimer SL_LS(LOOPTIME, new LockSleep);
-    std::cout << "start SL_LS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        SL_LS.StartLoop();
-        SL_LS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end SL_LS" << std::endl;
-    std::cout << "time SL_LS:" << totalTime / ITTERATIONS << std::endl << std::endl;
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new ThreadSleep), "ALC_TS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new LockSleep), "ALC_LS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new PerfectSleep), "ALC_PS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALC_RS", LOOPTIME, ITTERATIONS);
 
-
-    SingleLoopTimer SL_PS(LOOPTIME, new PerfectSleep);
-    std::cout << "start SL_PS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        SL_PS.StartLoop();
-        SL_PS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end SL_PS" << std::endl;
-    std::cout << "time SL_PS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    SingleLoopTimer SL_RS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE));
-    std::cout << "start SL_RS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        SL_RS.StartLoop();
-        SL_RS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end SL_RS" << std::endl;
-    std::cout << "time SL_RS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    DoubleLoopTimer DL_TS(LOOPTIME, new ThreadSleep);
-    std::cout << "start DL_TS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        DL_TS.StartLoop();
-        DL_TS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end DL_TS" << std::endl;
-    std::cout << "time DL_TS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    DoubleLoopTimer DL_LS(LOOPTIME, new LockSleep);
-    std::cout << "start DL_LS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        DL_LS.StartLoop();
-        DL_LS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end DL_LS" << std::endl;
-    std::cout << "time DL_LS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    DoubleLoopTimer DL_PS(LOOPTIME, new PerfectSleep);
-    std::cout << "start DL_PS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        DL_PS.StartLoop();
-        DL_PS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end DL_PS" << std::endl;
-    std::cout << "time DL_PS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    DoubleLoopTimer DL_RS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE));
-    std::cout << "start DL_RS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        DL_RS.StartLoop();
-        DL_RS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end DL_RS" << std::endl;
-    std::cout << "time DL_RS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerC ALC_TS(LOOPTIME, new ThreadSleep);
-    std::cout << "start ALC_TS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALC_TS.StartLoop();
-        ALC_TS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALC_TS" << std::endl;
-    std::cout << "time ALC_TS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerC ALC_LS(LOOPTIME, new LockSleep);
-    std::cout << "start ALC_LS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALC_LS.StartLoop();
-        ALC_LS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALC_LS" << std::endl;
-    std::cout << "time ALC_LS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerC ALC_PS(LOOPTIME, new PerfectSleep);
-    std::cout << "start ALC_PS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALC_PS.StartLoop();
-        ALC_PS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALC_PS" << std::endl;
-    std::cout << "time ALC_PS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerC ALC_RS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE));
-    std::cout << "start ALC_RS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALC_RS.StartLoop();
-        ALC_RS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALC_RS" << std::endl;
-    std::cout << "time ALC_RS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerS ALS_TS(LOOPTIME, new ThreadSleep);
-    std::cout << "start ALS_TS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALS_TS.StartLoop();
-        ALS_TS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALS_TS" << std::endl;
-    std::cout << "time ALS_TS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerS ALS_LS(LOOPTIME, new LockSleep);
-    std::cout << "start ALS_LS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALS_LS.StartLoop();
-        ALS_LS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALS_LS" << std::endl;
-    std::cout << "time ALS_LS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerS ALS_PS(LOOPTIME, new PerfectSleep);
-    std::cout << "start ALS_PS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALS_PS.StartLoop();
-        ALS_PS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALS_PS" << std::endl;
-    std::cout << "time ALS_PS:" << totalTime / ITTERATIONS << std::endl << std::endl;
-
-
-    AllLoopTimerS ALS_RS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE));
-    std::cout << "start ALS_RS" << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < ITTERATIONS; i++)
-    {
-        ALS_RS.StartLoop();
-        ALS_RS.HandleLoop();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    totalTime = (end - start).count() / 1e6;
-    std::cout << "end ALS_RS" << std::endl;
-    std::cout << "time ALS_RS:" << totalTime / ITTERATIONS << std::endl << std::endl;
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new ThreadSleep), "ALS_TS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new LockSleep), "ALS_LS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new PerfectSleep), "ALS_PS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALS_RS", LOOPTIME, ITTERATIONS);
 }
