@@ -14,8 +14,8 @@
 
 #define PERIOD 20
 #define TOLERANCE 0.02
-#define ITTERATIONS 100
-#define LOOPTIME 20
+#define ITTERATIONS 10000
+#define LOOPTIME 100
 
 void WriteQueue(std::queue<std::chrono::steady_clock::duration> queue, std::string name)
 {
