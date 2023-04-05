@@ -36,9 +36,9 @@ void LoopTimerTest(ILoopTimer* loopTimer, std::string name, double loopTime, int
 
     std::cout << "start " << name << ": " << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
+    loopTimer->StartLoop();
     for (int i = 0; i < itterations; i++)
     {
-        loopTimer->StartLoop();
         queue.push(loopTimer->HandleLoop());
     }
     auto end = std::chrono::high_resolution_clock::now();

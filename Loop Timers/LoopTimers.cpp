@@ -8,10 +8,12 @@ void SingleLoopTimer::StartLoop()
 
 std::chrono::steady_clock::duration SingleLoopTimer::HandleLoop()
 {
+	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::duration sleepTime = std::chrono::nanoseconds(int64_t(loopTime * 1e6)) - (loopEndTime - loopStartTime);
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
+	StartLoop();
 	return std::chrono::high_resolution_clock::now() - loopStartTime;
 }
 
@@ -22,6 +24,7 @@ void DoubleLoopTimer::StartLoop()
 
 std::chrono::steady_clock::duration DoubleLoopTimer::HandleLoop()
 {
+	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::duration sleepTime;
 	if (overTime.count() > 0)
@@ -30,6 +33,7 @@ std::chrono::steady_clock::duration DoubleLoopTimer::HandleLoop()
 		sleepTime = (std::chrono::nanoseconds(int64_t(loopTime * 1e6))) - (loopEndTime - loopStartTime);
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
+	StartLoop();
 	overTime = (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
 	return std::chrono::high_resolution_clock::now() - loopStartTime;
 }
@@ -41,6 +45,7 @@ void AllLoopTimerC::StartLoop()
 
 std::chrono::steady_clock::duration AllLoopTimerC::HandleLoop()
 {
+	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
 	std::chrono::steady_clock::duration sleepTime;
 	if (overTime.count() > 0)
@@ -49,6 +54,7 @@ std::chrono::steady_clock::duration AllLoopTimerC::HandleLoop()
 		sleepTime = (std::chrono::nanoseconds(int64_t(loopTime * 1e6))) - (loopEndTime - loopStartTime);
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
+	StartLoop();
 	overTime += (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
 	return std::chrono::high_resolution_clock::now() - loopStartTime;
 }
@@ -65,9 +71,11 @@ void AllLoopTimerS::StartLoop()
 
 std::chrono::steady_clock::duration AllLoopTimerS::HandleLoop()
 {
+	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point endTime = (timerStartTime + std::chrono::nanoseconds(loopItteration * int64_t(loopTime * 1e6)));
 	std::chrono::steady_clock::duration sleepTime = endTime - loopStartTime;
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
+	StartLoop();
 	return std::chrono::high_resolution_clock::now() - loopStartTime;
 }
