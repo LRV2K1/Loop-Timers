@@ -22,10 +22,10 @@ void WriteQueue(std::queue<std::tuple<std::chrono::steady_clock::duration, std::
 {
     std::ofstream file;
     file.open(name + ".csv");
-    file << "Loop Time (ns)" << "Program Time (ns)" << std::endl;
+    file << "Loop Time (ns)" << ";" << "Program Time (ns)" << std::endl;
     while (!queue.empty())
     {
-        file << (std::get<0>(queue.front())).count() << (std::get<1>(queue.front()) - startTime).count() << std::endl;
+        file << (std::get<0>(queue.front())).count() << ";" << (std::get<1>(queue.front()) - startTime).count() << std::endl;
         queue.pop();
     }
     file.close();
