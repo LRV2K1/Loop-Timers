@@ -1,12 +1,13 @@
 #include "LoopTimers.h"
 #include "SleepFunctions.h"
 
-void SingleLoopTimer::StartLoop()
+std::chrono::steady_clock::time_point SingleLoopTimer::StartLoop()
 {
 	loopStartTime = std::chrono::high_resolution_clock::now();
+	return loopStartTime;
 }
 
-std::chrono::steady_clock::duration SingleLoopTimer::HandleLoop()
+std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point> SingleLoopTimer::HandleLoop()
 {
 	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
@@ -14,15 +15,16 @@ std::chrono::steady_clock::duration SingleLoopTimer::HandleLoop()
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	return std::chrono::high_resolution_clock::now() - loopStartTime;
+	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
 }
 
-void DoubleLoopTimer::StartLoop()
+std::chrono::steady_clock::time_point DoubleLoopTimer::StartLoop()
 {
 	loopStartTime = std::chrono::high_resolution_clock::now();
+	return loopStartTime;
 }
 
-std::chrono::steady_clock::duration DoubleLoopTimer::HandleLoop()
+std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point> DoubleLoopTimer::HandleLoop()
 {
 	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
@@ -35,15 +37,16 @@ std::chrono::steady_clock::duration DoubleLoopTimer::HandleLoop()
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
 	overTime = (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
-	return std::chrono::high_resolution_clock::now() - loopStartTime;
+	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
 }
 
-void AllLoopTimerC::StartLoop()
+std::chrono::steady_clock::time_point AllLoopTimerC::StartLoop()
 {
 	loopStartTime = std::chrono::high_resolution_clock::now();
+	return loopStartTime;
 }
 
-std::chrono::steady_clock::duration AllLoopTimerC::HandleLoop()
+std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point> AllLoopTimerC::HandleLoop()
 {
 	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point loopEndTime = std::chrono::high_resolution_clock::now();
@@ -56,10 +59,10 @@ std::chrono::steady_clock::duration AllLoopTimerC::HandleLoop()
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
 	overTime += (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
-	return std::chrono::high_resolution_clock::now() - loopStartTime;
+	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
 }
 
-void AllLoopTimerS::StartLoop()
+std::chrono::steady_clock::time_point AllLoopTimerS::StartLoop()
 {
 	loopStartTime = std::chrono::high_resolution_clock::now();
 	if (loopItteration == 0)
@@ -67,9 +70,10 @@ void AllLoopTimerS::StartLoop()
 		timerStartTime = loopStartTime;
 	}
 	loopItteration++;
+	return loopStartTime;
 }
 
-std::chrono::steady_clock::duration AllLoopTimerS::HandleLoop()
+std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point> AllLoopTimerS::HandleLoop()
 {
 	std::chrono::steady_clock::time_point loopStartTime = this->loopStartTime;
 	std::chrono::steady_clock::time_point endTime = (timerStartTime + std::chrono::nanoseconds(loopItteration * int64_t(loopTime * 1e6)));
@@ -77,5 +81,5 @@ std::chrono::steady_clock::duration AllLoopTimerS::HandleLoop()
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	return std::chrono::high_resolution_clock::now() - loopStartTime;
+	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
 }
