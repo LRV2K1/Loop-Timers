@@ -15,7 +15,7 @@
 
 #define PERIOD 20
 #define TOLERANCE 0.02
-#define ITTERATIONS 100
+#define ITTERATIONS 1200
 #define LOOPTIME 100
 
 void WriteQueue(std::queue<std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point>> queue, std::chrono::steady_clock::time_point startTime, std::string name)
@@ -65,7 +65,7 @@ int main()
     LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new ThreadSleep), "DL_TS", LOOPTIME, ITTERATIONS);
     LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new LockSleep), "DL_LS", LOOPTIME, ITTERATIONS);
     LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new PerfectSleep), "DL_PS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "SL_RS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "DL_RS", LOOPTIME, ITTERATIONS);
 
     LoopTimerTest(new AllLoopTimerC(LOOPTIME, new ThreadSleep), "ALC_TS", LOOPTIME, ITTERATIONS);
     LoopTimerTest(new AllLoopTimerC(LOOPTIME, new LockSleep), "ALC_LS", LOOPTIME, ITTERATIONS);

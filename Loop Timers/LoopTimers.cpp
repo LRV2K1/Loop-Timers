@@ -15,7 +15,7 @@ std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
+	return std::make_tuple(this->loopStartTime - loopStartTime, this->loopStartTime);
 }
 
 std::chrono::steady_clock::time_point DoubleLoopTimer::StartLoop()
@@ -36,8 +36,8 @@ std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	overTime = (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
-	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
+	overTime = (this->loopStartTime - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
+	return std::make_tuple(this->loopStartTime - loopStartTime, this->loopStartTime);
 }
 
 std::chrono::steady_clock::time_point AllLoopTimerC::StartLoop()
@@ -58,8 +58,8 @@ std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	overTime += (std::chrono::high_resolution_clock::now() - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
-	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
+	overTime += (this->loopStartTime - loopStartTime) - std::chrono::nanoseconds(int64_t(loopTime * 1e6));
+	return std::make_tuple(this->loopStartTime - loopStartTime, this->loopStartTime);
 }
 
 std::chrono::steady_clock::time_point AllLoopTimerS::StartLoop()
@@ -81,5 +81,5 @@ std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_
 	double sleepMs = sleepTime.count() / 1e6;
 	sleepFunction->Sleep(sleepMs);
 	StartLoop();
-	return std::make_tuple(std::chrono::high_resolution_clock::now() - loopStartTime, this->loopStartTime);
+	return std::make_tuple(this->loopStartTime - loopStartTime, this->loopStartTime);
 }
