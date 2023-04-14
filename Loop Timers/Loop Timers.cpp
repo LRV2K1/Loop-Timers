@@ -15,7 +15,7 @@
 
 #define PERIOD 20
 #define TOLERANCE 0.02
-#define ITTERATIONS 1200
+#define ITERATIONS 1200
 #define LOOPTIME 100
 
 void WriteQueue(std::queue<std::tuple<std::chrono::steady_clock::duration, std::chrono::steady_clock::time_point>> queue, std::chrono::steady_clock::time_point startTime, std::string name)
@@ -45,7 +45,7 @@ void LoopTimerTest(ILoopTimer* loopTimer, std::string name, double loopTime, int
     double totalTime = (end - start).count() / 1e6;
     std::cout << "end " << name << ": " << std::endl;
     std::cout << "time " << name << ": " << totalTime << std::endl;
-    std::cout << "mean " << name << ": " << totalTime / ITTERATIONS << std::endl << std::endl;
+    std::cout << "mean " << name << ": " << totalTime / ITERATIONS << std::endl << std::endl;
 
     WriteQueue(queue, start, name);
 
@@ -57,23 +57,23 @@ int main()
     #pragma comment(lib, "winmm.lib") // for timeBeginPeriod
     timeBeginPeriod(PERIOD);
 
-    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new ThreadSleep), "SL_TS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new LockSleep), "SL_LS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new PerfectSleep), "SL_PS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "SL_RS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new ThreadSleep), "SL_TS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new LockSleep), "SL_LS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new PerfectSleep), "SL_PS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new SingleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "SL_RS", LOOPTIME, ITERATIONS);
 
-    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new ThreadSleep), "DL_TS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new LockSleep), "DL_LS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new PerfectSleep), "DL_PS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "DL_RS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new ThreadSleep), "DL_TS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new LockSleep), "DL_LS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new PerfectSleep), "DL_PS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new DoubleLoopTimer(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "DL_RS", LOOPTIME, ITERATIONS);
 
-    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new ThreadSleep), "ALC_TS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new LockSleep), "ALC_LS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new PerfectSleep), "ALC_PS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALC_RS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new ThreadSleep), "ALC_TS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new LockSleep), "ALC_LS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new PerfectSleep), "ALC_PS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerC(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALC_RS", LOOPTIME, ITERATIONS);
 
-    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new ThreadSleep), "ALS_TS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new LockSleep), "ALS_LS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new PerfectSleep), "ALS_PS", LOOPTIME, ITTERATIONS);
-    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALS_RS", LOOPTIME, ITTERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new ThreadSleep), "ALS_TS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new LockSleep), "ALS_LS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new PerfectSleep), "ALS_PS", LOOPTIME, ITERATIONS);
+    LoopTimerTest(new AllLoopTimerS(LOOPTIME, new RobustSleep(PERIOD, TOLERANCE)), "ALS_RS", LOOPTIME, ITERATIONS);
 }
